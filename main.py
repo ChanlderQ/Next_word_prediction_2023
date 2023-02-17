@@ -1,18 +1,10 @@
-import torch
+import torch,sys
 import string
 
 from transformers import BertTokenizer, BertForMaskedLM
-from transformers import BartTokenizer, BartForConditionalGeneration
-from transformers import ElectraTokenizer, ElectraForMaskedLM
 
 bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 bert_model = BertForMaskedLM.from_pretrained('bert-base-uncased').eval()
-
-bart_tokenizer = BartTokenizer.from_pretrained('facebook/bart-large')
-bart_model = BartForConditionalGeneration.from_pretrained('facebook/bart-large').eval()
-
-electra_tokenizer = ElectraTokenizer.from_pretrained('google/electra-small-generator')
-electra_model = ElectraForMaskedLM.from_pretrained('google/electra-small-generator').eval()
 
 
 top_k = 5
@@ -44,18 +36,5 @@ def get_predictions(text_sentence, top_clean=5):
     input_ids, mask_idx = encode(bert_tokenizer, text_sentence)
     with torch.no_grad():
         predict = bert_model(input_ids)[0]
-    bert = decode(bert_tokenizer, predict[0, mask_idx, :].topk(top_k).indices.tolist(), top_clean)
-    
-    # BART
-    input_ids, mask_idx = encode(bart_tokenizer, text_sentence, add_special_tokens=True)
-    with torch.no_grad():
-        predict = bart_model(input_ids)[0]
-    bart = decode(bart_tokenizer, predict[0, mask_idx, :].topk(top_k).indices.tolist(), top_clean)
-
-    # ELECTRA
-    input_ids, mask_idx = encode(electra_tokenizer, text_sentence, add_special_tokens=True)
-    with torch.no_grad():
-        predict = electra_model(input_ids)[0]
-    electra = decode(electra_tokenizer, predict[0, mask_idx, :].topk(top_k).indices.tolist(), top_clean)
-
-    return {'bert': bert,"bart":bart,"electra":electra}
+    bert_result = decode(bert_tokenizer, predict[0, mask_idx, :].topk(top_k).indices.tolist(), top_clean)
+    return bert_result
