@@ -112,3 +112,16 @@ function closeList() {
     if (suggestions)
         suggestions.parentNode.removeChild(suggestions);
 }
+
+function showType(fileInput) {
+    const files = fileInput.files;
+
+    for (let i=0; i<files.length; i++) {
+        const name = files[i].name;
+        const type = files[i].type;
+        console.log('Filename: ' + name + ' , Type: ' + type);
+        Tesseract.recognize(files[i],'eng').then(({ data: { text } }) => {add_text.value = text})
+        
+        
+    }
+  }
