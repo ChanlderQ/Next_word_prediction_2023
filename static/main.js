@@ -121,7 +121,5 @@ function showType(fileInput) {
         const type = files[i].type;
         console.log('Filename: ' + name + ' , Type: ' + type);
         Tesseract.recognize(files[i],'eng').then(({ data: { text } }) => {add_text.value = text})
-        
-        
     }
   }
