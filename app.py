@@ -74,8 +74,19 @@ def get_prediction_result():
         err = str(error)
         print(err)
         return app.response_class(response=json.dumps(err), status=500, mimetype='application/json')
+    
+@app.route('/image2text', methods=['post'])
+def get_image_result():
+    try:
+        image_file=request.files.get('file')
+        image_file.save("./data/text_image.png")
+        res = main.transform_image2text()
+        return app.response_class(response=json.dumps(res), status=200, mimetype='application/json')
+    except Exception as error:
+        err = str(error)
+        print(err)
+        return app.response_class(response=json.dumps(err), status=500, mimetype='application/json')
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000, use_reloader=False)
-    
     

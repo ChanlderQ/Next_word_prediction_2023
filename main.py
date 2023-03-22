@@ -1,5 +1,6 @@
 import torch,sys
 import string
+import easyocr
 
 from transformers import BertTokenizer, BertForMaskedLM
 
@@ -38,3 +39,11 @@ def get_predictions(text_sentence, top_clean=5):
         predict = bert_model(input_ids)[0]
     bert_result = decode(bert_tokenizer, predict[0, mask_idx, :].topk(top_k).indices.tolist(), top_clean)
     return bert_result
+
+def transform_image2text(image_file="./data/text_image.png"):
+    reader = easyocr.Reader(['en']) 
+    result = reader.readtext(image_file)
+    final_result=""
+    for line_result in result:
+        final_result=final_result+line_result[1]
+    return final_result

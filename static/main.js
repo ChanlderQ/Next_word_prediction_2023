@@ -73,6 +73,26 @@ function get_word_prediction(){
     return fruits
 }
 
+function get_text_from_image(inputfile){
+    var form_data=new FormData()
+    form_data.append('file',inputfile)
+    console.log(form_data)
+    $.ajax({
+        url: '/image2text',
+        type: "post",
+        contentType: false,
+        caches:false,
+        processData:false,
+        success:function(data){
+            console.log("success!")
+        }
+    }).done(function (jsondata, textStatus, jqXHR) {
+        console.log(jsondata)
+    }).fail(function (jsondata, textStatus, jqXHR) {
+        console.log(jsondata)
+    })
+}
+
 function fill_html_with_prediction(result){
     for (let i=0; i<5; i++) {
         suggestion = document.createElement('div')
@@ -119,7 +139,27 @@ function showType(fileInput) {
     for (let i=0; i<files.length; i++) {
         const name = files[i].name;
         const type = files[i].type;
-        console.log('Filename: ' + name + ' , Type: ' + type);
-        Tesseract.recognize(files[i],'eng').then(({ data: { text } }) => {add_text.value = text})
+
+        console.log('Filename: ' + name + ' , Type: ' + type)
+
+        var form_data=new FormData()
+        form_data.append('file',files[i])
+        console.log(form_data)
+        $.ajax({
+            url: '/image2text',
+            type: "post",
+            contentType: false,
+            caches:false,
+            data:form_data,
+            processData:false,
+            success:function(){
+                console.log("success!")
+            }
+        }).done(function (jsondata, textStatus, jqXHR) {
+            console.log(jsondata)
+            add_text.value = add_text.value+jsondata
+        }).fail(function (jsondata, textStatus, jqXHR) {
+            console.log(jsondata)
+        })
     }
   }
